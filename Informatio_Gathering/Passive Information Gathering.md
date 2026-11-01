@@ -1,6 +1,6 @@
 
 # Passive Information Gathering
-
+ 
 **Passive Information Gathering** is the process of collecting information about a target without directly interacting with its systems or infrastructure.
 
 The objective is to understand the target's external footprint before starting active reconnaissance.
