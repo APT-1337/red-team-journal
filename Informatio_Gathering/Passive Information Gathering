@@ -1,0 +1,313 @@
+
+# Passive Information Gathering
+
+**Passive Information Gathering** is the process of collecting information about a target without directly interacting with its systems or infrastructure.
+
+The objective is to understand the target's external footprint before starting active reconnaissance.
+
+---
+
+## 1.1 Whois Enumeration
+
+**WHOIS** is a query and response protocol (commonly using TCP port 43) that provides registration information about domain names and IP address ranges.
+
+### Information we can collect
+
+- Domain registrar.
+    
+- Domain registration and expiration dates.
+    
+- Name servers (NS).
+    
+- Domain status.
+    
+- Registrant information, if publicly available.
+    
+- Registration organization and contact details, depending on privacy protection.
+    
+
+### Basic usage
+
+```
+whois example.com
+```
+
+Query WHOIS information for a domain.
+
+### Selecting a WHOIS server
+
+We can use the `-h` argument to specify a particular WHOIS server instead of relying on the default server.
+
+```
+whois -h whois.verisign-grs.com example.com
+```
+
+- `-h`: Specifies the WHOIS server.
+    
+- `whois.verisign-grs.com`: The WHOIS server.
+    
+- `example.com`: The target domain.
+    
+
+### Reverse WHOIS Search
+
+A Reverse WHOIS Search allows us to search for domains associated with a particular registration detail, such as:
+
+- Organization name.
+    
+- Registrant email address.
+    
+- Registrant name.
+    
+
+This can help identify other domains that may belong to the same organization.
+
+**Important:** Reverse WHOIS is generally performed through specialized services, not through the standard `whois` command itself. Privacy protection and redacted registration data may limit the results.
+
+---
+
+## 1.2 Google Hacking (Google Dorking)
+
+Google Hacking is the technique of using advanced Google search operators to discover publicly indexed information.
+
+It can help identify exposed files, public documents, login pages, and information related to a target.
+
+### Common Google Search Operators
+
+|Operator|Purpose|
+|---|---|
+|`site:`|Restricts results to a specific domain or website.|
+|`filetype:`|Searches for files with a specific extension.|
+|`-filetype:`|Excludes files with a specific extension.|
+|`intitle:`|Searches for a specific word in the page title.|
+|`inurl:`|Searches for a specific word in the URL.|
+|`intext:`|Searches for a specific word in the page content.|
+
+### Examples
+
+**1. Search within a specific domain**
+
+```
+site:example.com
+```
+
+Returns indexed pages associated with `example.com`.
+
+**2. Search for PDF files**
+
+```
+site:example.com filetype:pdf
+```
+
+Finds indexed PDF files on the target domain.
+
+**3. Exclude PDF files**
+
+```
+site:example.com -filetype:pdf
+```
+
+Excludes PDF files from the search results.
+
+**4. Search for pages with a specific title**
+
+```
+site:example.com intitle:login
+```
+
+Searches for pages on the domain containing `login` in their titles.
+
+### Google Hacking Database (GHDB)
+
+The **Google Hacking Database (GHDB)** is a collection of Google Dorks that can help security professionals discover publicly exposed information.
+
+It is maintained by Exploit Database.
+
+**Reference:**  
+[https://www.exploit-db.com/google-hacking-database](https://www.exploit-db.com/google-hacking-database)
+
+### DorkSearch
+
+DorkSearch is a tool that helps construct Google Dorks using search operators.
+
+**Reference:**  
+[https://dorksearch.com/](https://dorksearch.com/)
+
+---
+
+## 1.3 Netcraft
+
+**Netcraft** provides information about websites, hosting infrastructure, and technologies used by web servers.
+
+It can help us gather information about a target without directly scanning its infrastructure.
+
+### DNS Search
+
+Use Netcraft's DNS Search to investigate DNS-related information associated with a domain.
+
+### Site Report
+
+A Netcraft Site Report can provide information such as:
+
+- Hosting provider.
+    
+- IP address.
+    
+- Web server information.
+    
+- Operating system information, when detectable.
+    
+- Hosting history.
+    
+- Website technologies.
+    
+
+**Reference:**  
+[https://sitereport.netcraft.com/](https://sitereport.netcraft.com/)
+
+---
+
+## 1.4 Open-Source Code
+
+Public source-code repositories can contain useful information about an organization's infrastructure, applications, and technologies.
+
+During reconnaissance, we can search for publicly available repositories associated with the target.
+
+### Common Platforms
+
+- **GitHub:** [https://github.com/](https://github.com/)
+    
+- **GitLab:** [https://gitlab.com/](https://gitlab.com/)
+    
+- **SourceForge:** [https://sourceforge.net/](https://sourceforge.net/)
+    
+
+### What to look for
+
+- Organization-owned repositories.
+    
+- Application source code.
+    
+- Configuration files.
+    
+- API endpoints.
+    
+- Internal hostnames accidentally included in code.
+    
+- Development and deployment documentation.
+    
+- Exposed credentials or secrets.
+    
+
+**Important:** Finding credentials or secrets in public repositories does not authorize their use. Treat them as sensitive information and report them through the appropriate responsible disclosure channel.
+
+---
+
+## 1.5 Shodan
+
+**Shodan** is a search engine for Internet-connected devices and services.
+
+Unlike traditional search engines that primarily index web pages, Shodan collects information about exposed services and devices.
+
+It can help identify the target's external attack surface using previously collected information.
+
+### Common Shodan Filters
+
+|Filter|Purpose|
+|---|---|
+|`hostname:`|Searches for a hostname.|
+|`ip:`|Searches for a specific IP address.|
+|`net:`|Searches within an IP network or CIDR range.|
+|`port:`|Searches for a specific open port.|
+|`org:`|Searches for an organization.|
+|`country:`|Filters results by country code.|
+|`product:`|Searches for a specific service or product.|
+|`ssl:`|Searches for SSL/TLS-related information.|
+
+### Examples
+
+```
+hostname:example.com
+```
+
+Search for services associated with a hostname.
+
+```
+org:"Example Organization"
+```
+
+Search for devices associated with an organization.
+
+```
+hostname:example.com port:443
+```
+
+Search for services associated with the hostname on port 443.
+
+```
+net:192.0.2.0/24
+```
+
+Search within a specific network range.
+
+**Note:** Shodan results represent observations collected by Shodan and may not reflect the target's current state.
+
+**Reference:**  
+[https://www.shodan.io/](https://www.shodan.io/)
+
+---
+
+## 1.6 Security Headers and SSL/TLS Information
+
+We can inspect publicly available HTTP security headers and SSL/TLS certificate information to understand how a website is configured.
+
+### A. Security Headers
+
+HTTP security headers help protect web applications against certain classes of attacks.
+
+We can inspect response headers using `curl`:
+
+```
+curl -I https://example.com
+```
+
+Common security headers include:
+
+|Header|Purpose|
+|---|---|
+|`Strict-Transport-Security`|Enforces HTTPS connections.|
+|`Content-Security-Policy`|Restricts the sources from which content can be loaded.|
+|`X-Frame-Options`|Controls whether a page can be embedded in frames.|
+|`X-Content-Type-Options`|Helps prevent MIME-type sniffing.|
+|`Referrer-Policy`|Controls how much referrer information is sent.|
+
+### B. SSL/TLS Certificate Information
+
+SSL/TLS certificates can provide information about a website's identity and certificate configuration.
+
+We can inspect a certificate using OpenSSL:
+
+```
+openssl s_client -connect example.com:443 -servername example.com
+```
+
+Useful certificate information includes:
+
+- Subject.
+    
+- Issuer.
+    
+- Validity period.
+    
+- Subject Alternative Names (SANs).
+    
+- Certificate chain.
+    
+- TLS protocol and cipher information negotiated during the connection.
+    
+
+**Note:** Unlike passive searches of existing public records, these commands initiate a connection to the target. Treat them as lightweight active information gathering.
+
+---
+
+
